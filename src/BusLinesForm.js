@@ -5,8 +5,9 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import React, { useEffect, useState } from "react";
 import DepartureTable from "./DepartureTable";
+import axios from "axios";
 
-export default function RouteSelect() {
+export default function BusLinesForm() {
   const [routes, setRoutes] = useState([]);
   const [route, setRoute] = useState("");
   const [directions, setDirections] = useState([]);
@@ -19,43 +20,39 @@ export default function RouteSelect() {
 
   /* API Data getters */
   useEffect(() => {
+    const getRoutes = async () => {
+      const response = await axios.get(
+        "https://svc.metrotransit.org/nextripv2/routes"
+      );
+      setisRoutesLoaded(true);
+      setRoutes(response.data);
+    };
+
     getRoutes();
   }, []);
+
   useEffect(() => {
-    async function getDirections() {
-      const response = await fetch(
+    const getDirections = async () => {
+      const response = await axios.get(
         `https://svc.metrotransit.org/NexTrip/Directions/${route.route_id}?format=json`
       );
-      if (!response.ok) {
-        const message = `Error getting directions: ${response.status}`;
-        throw new Error(message);
-      }
-      const directions = await response.json();
       setIsDirectionsLoaded(true);
-      setDirections(directions);
-    }
+      setDirections(response.data);
+    };
     if (route !== "") {
       getDirections();
     }
   }, [route]);
+
   useEffect(() => {
-    async function getStops() {
-      const response = await fetch(
-        `https://svc.metrotransit.org/NexTrip/Stops/${route.route_id}/${direction.Value}?format=json`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+    const getStops = async () => {
+      const response = await axios.get(
+        `https://svc.metrotransit.org/NexTrip/Stops/${route.route_id}/${direction.Value}?format=json`
       );
-      if (!response.ok) {
-        const message = `Error getting stops: ${response.status}`;
-        throw new Error(message);
-      }
-      const stops = await response.json();
       setIsStopsLoaded(true);
-      setStops(stops);
-    }
+      setStops(response.data);
+    };
+
     if (direction !== "") {
       getStops();
     }
@@ -71,20 +68,6 @@ export default function RouteSelect() {
   const handleStopChange = (event) => {
     setStop(event.target.value);
   };
-
-  /* fetch functions */
-  async function getRoutes() {
-    const response = await fetch(
-      "https://svc.metrotransit.org/nextripv2/routes"
-    );
-    if (!response.ok) {
-      const message = `Error getting routes: ${response.status}`;
-      throw new Error(message);
-    }
-    const routes = await response.json();
-    setisRoutesLoaded(true);
-    setRoutes(routes);
-  }
 
   /* Menu item arrays*/
   const routeList = routes.map((route) => (

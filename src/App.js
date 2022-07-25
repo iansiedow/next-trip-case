@@ -1,6 +1,6 @@
 import "./App.css";
 import Container from "@mui/material/Container";
-import RouteSelect from "./BusLinesForm";
+import BusLinesForm from "./BusLinesForm";
 import Header from "./Header";
 
 function App() {
@@ -8,7 +8,7 @@ function App() {
     <>
       <Header />
       <Container maxWidth="md">
-        <RouteSelect />
+        <BusLinesForm />
       </Container>
     </>
   );

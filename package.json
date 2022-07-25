@@ -50,5 +50,8 @@
     "hooks": {
       "pre-commit": "lint-staged"
     }
+  },
+  "devDependencies": {
+    "axios": "^0.27.2"
   }
 }

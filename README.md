@@ -1,3 +1,16 @@
+# Minneapolis Bus Line
+This application uses MetroTransits NexTrip API to display departure information based on a selected Route, Destination, and Stop. 
+
+It is modeled after the [NexTrip](https://www.metrotransit.org/nextrip) web app in both style and functionality
+[NexTrip API Documentation](https://svc.metrotransit.org/nextrip)
+[NexTrip Swagger Endpoints](https://svc.metrotransit.org/swagger/index.html)
+
+The app is as single page application (SPA). It uses React functional componenets and hooks with axios used for api calls. The Dropdown, heading, and table components come from Material UI. 
+
+I initially used the `fetch` API for REST calls but switched to `axios` for cleaner and more concise code. Most of my CSS experience is with internal design systems. I went with Material UI over alternatives like Chakra UI, Bootstrap, or Tailwind for ease of use and simple Google/Android styles. Addings custom CSS to the prebuilt components was more challenging and verbose than I had anticipated. If I were to rewrite this project I'd likely skip a design system all together and just use CSS Modules or Sass for greater customization and developer experience. 
+
+If I had time to get the app production ready I would probably split out the BusLinesForm.js into reusable dropdown and table components. To manage state across components I'd use Redux. I would also consider migrating the app to use TypeScript over JavaScript to catch type errors and improve developer experience.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
@@ -20,6 +33,7 @@ You may also see any lint errors in the console.
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+This app uses react-testing-library and jest.
 
 ### `npm run build`
 
@@ -30,16 +44,6 @@ The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
 ## Learn More
 
@@ -55,7 +59,7 @@ React component library based on Googles Material Design framework. Learn more a
 
 ### Husky
 
-Pre-commit hooks with Husky
+Pre-commit hooks with Husky. Used with lint-staged to run the linter in a pre-commit hook. Learn more at [Husky](https://typicode.github.io/husky/#/)
 
 ### Prettier
 
