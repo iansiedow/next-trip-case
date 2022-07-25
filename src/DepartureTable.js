@@ -8,45 +8,93 @@ import Paper from "@mui/material/Paper";
 import { useEffect, useState } from "react";
 
 export default function DepartureTable({ route_id, direction_id, place_code }) {
-  const [departures, setDepartures] = useState("");
+  const [departures, setDepartures] = useState([]);
   const [isDeparturesLoaded, setIsDeparturesLoaded] = useState(false);
 
   useEffect(() => {
-    if (place_code != "") {
+    async function getDeparture() {
+      const response = await fetch(
+        `https://svc.metrotransit.org/nextripv2/${route_id}/${direction_id}/${place_code}?format=json`
+      );
+      if (!response.ok) {
+        const message = `An error has occured: ${response.status}`;
+        console.log(response);
+        throw new Error(message);
+      }
+      const res = await response.json();
+      setIsDeparturesLoaded(true);
+      setDepartures(res);
+    }
+    if (place_code !== "") {
       getDeparture();
     }
-  }, [place_code]);
+  }, [place_code, direction_id, route_id]);
 
-  async function getDeparture() {
-    const response = await fetch(
-      `https://svc.metrotransit.org/nextripv2/${route_id}/${direction_id}/${place_code}?format=json`
-    );
-    if (!response.ok) {
-      const message = `An error has occured: ${response.status}`;
-      console.log(response);
-      throw new Error(message);
-    }
-    const res = await response.json();
-    console.log(res);
-    setIsDeparturesLoaded(true);
-    setDepartures(res.departures);
-  }
   return (
     <>
       {isDeparturesLoaded ? (
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <Table sx={{ minWidth: 400 }} aria-label="simple table">
             <TableHead>
               <TableRow>
-                <TableCell>Route</TableCell>
-                <TableCell align="left">Destination</TableCell>
-                <TableCell align="right">Departs</TableCell>
+                <TableCell
+                  sx={{
+                    color: "text.primary",
+                    fontSize: 20,
+                    fontWeight: "bold",
+                  }}
+                >
+                  {departures.stops[0].description}
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: "text.primary",
+                    fontSize: 20,
+                    fontWeight: "bold",
+                  }}
+                  align="right"
+                >
+                  Stop # {departures.stops[0].stop_id}
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {departures.map((departure) => (
+              <TableRow>
+                <TableCell
+                  sx={{
+                    color: "text.secondary",
+                    fontSize: 16,
+                    fontWeight: 400,
+                    bgcolor: "#ffd200",
+                  }}
+                >
+                  ROUTE
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: "text.secondary",
+                    fontSize: 16,
+                    fontWeight: 400,
+                    bgcolor: "#ffd200",
+                  }}
+                  align="left"
+                >
+                  DESTINATION
+                </TableCell>
+                <TableCell
+                  sx={{
+                    color: "text.secondary",
+                    fontSize: 16,
+                    fontWeight: 400,
+                    bgcolor: "#ffd200",
+                  }}
+                  align="right"
+                >
+                  DEPARTS
+                </TableCell>
+              </TableRow>
+              {departures.departures.map((departure) => (
                 <TableRow
-                  key={departure.trip_id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell component="th" scope="row">

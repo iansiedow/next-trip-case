@@ -3,7 +3,7 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import DepartureTable from "./DepartureTable";
 
 export default function RouteSelect() {
@@ -17,20 +17,51 @@ export default function RouteSelect() {
   const [isDirectionsLoaded, setIsDirectionsLoaded] = useState(false);
   const [isStopsLoaded, setIsStopsLoaded] = useState(false);
 
+  /* API Data getters */
   useEffect(() => {
     getRoutes();
   }, []);
   useEffect(() => {
-    if (route != "") {
+    async function getDirections() {
+      const response = await fetch(
+        `https://svc.metrotransit.org/NexTrip/Directions/${route.route_id}?format=json`
+      );
+      if (!response.ok) {
+        const message = `Error getting directions: ${response.status}`;
+        throw new Error(message);
+      }
+      const directions = await response.json();
+      setIsDirectionsLoaded(true);
+      setDirections(directions);
+    }
+    if (route !== "") {
       getDirections();
     }
   }, [route]);
   useEffect(() => {
-    if (direction != "") {
+    async function getStops() {
+      const response = await fetch(
+        `https://svc.metrotransit.org/NexTrip/Stops/${route.route_id}/${direction.Value}?format=json`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      if (!response.ok) {
+        const message = `Error getting stops: ${response.status}`;
+        throw new Error(message);
+      }
+      const stops = await response.json();
+      setIsStopsLoaded(true);
+      setStops(stops);
+    }
+    if (direction !== "") {
       getStops();
     }
-  }, [direction]);
+  }, [direction, route]);
 
+  //Event handlers
   const handleRouteChange = (event) => {
     setRoute(event.target.value);
   };
@@ -40,57 +71,24 @@ export default function RouteSelect() {
   const handleStopChange = (event) => {
     setStop(event.target.value);
   };
+
+  /* fetch functions */
   async function getRoutes() {
     const response = await fetch(
       "https://svc.metrotransit.org/nextripv2/routes"
     );
     if (!response.ok) {
-      const message = `An error has occured: ${response.status}`;
+      const message = `Error getting routes: ${response.status}`;
       throw new Error(message);
     }
     const routes = await response.json();
-    console.log(routes);
     setisRoutesLoaded(true);
     setRoutes(routes);
   }
-  async function getDirections() {
-    console.log("directions");
-    const response = await fetch(
-      `https://svc.metrotransit.org/NexTrip/Directions/${route.route_id}?format=json`
-    );
-    if (!response.ok) {
-      const message = `An error has occured: ${response.status}`;
-      throw new Error(message);
-    }
-    const directions = await response.json();
-    console.log(directions);
-    setIsDirectionsLoaded(true);
-    setDirections(directions);
-  }
-  async function getStops() {
-    const response = await fetch(
-      `https://svc.metrotransit.org/NexTrip/Stops/${route.route_id}/${direction.Value}?format=json`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    if (!response.ok) {
-      const message = `An error has occured: ${response.status}`;
-      console.log(response);
-      throw new Error(message);
-    }
-    const stops = await response.json();
-    console.log(stops);
-    setIsStopsLoaded(true);
-    setStops(stops);
-  }
 
+  /* Menu item arrays*/
   const routeList = routes.map((route) => (
-    <MenuItem key={route.route_id} value={route}>
-      {route.route_label}
-    </MenuItem>
+    <MenuItem value={route}>{route.route_label}</MenuItem>
   ));
 
   const directionList = directions.map((direction) => (
@@ -100,60 +98,66 @@ export default function RouteSelect() {
   const stopList = stops.map((stop) => (
     <MenuItem value={stop}>{stop.Text}</MenuItem>
   ));
+
   return (
     <>
       {isRoutesLoaded ? (
-        <Box sx={{ minWidth: 120 }}>
-          <InputLabel id="route-label">Select Route</InputLabel>
-          <Select
-            labelId="route-select-label"
-            id="route"
-            name="route"
-            value={route}
-            label="route"
-            onChange={handleRouteChange}
-          >
-            {routeList}
-          </Select>
+        <Box sx={{ p: 1, minWidth: 120 }}>
+          <FormControl fullWidth>
+            <InputLabel id="route-select-label">Select route</InputLabel>
+            <Select
+              labelId="route-select-label"
+              id="route"
+              value={route}
+              label="Route"
+              onChange={handleRouteChange}
+            >
+              {routeList}
+            </Select>
+          </FormControl>
         </Box>
       ) : (
-        "Loading..."
+        ""
       )}
       {isDirectionsLoaded ? (
-        <Box sx={{ minWidth: 120 }}>
-          <InputLabel id="direction-label">Select Direction</InputLabel>
-          <Select
-            labelId="direction-select-label"
-            id="direction"
-            name="direction"
-            value={direction}
-            label="direction"
-            onChange={handleDirectionChange}
-          >
-            {directionList}
-          </Select>
+        <Box sx={{ p: 1, minWidth: 120 }}>
+          <FormControl fullWidth>
+            <InputLabel id="direction-select-label">
+              Select direction
+            </InputLabel>
+            <Select
+              labelId="direction-select-label"
+              id="direction"
+              value={direction}
+              label="direction"
+              onChange={handleDirectionChange}
+            >
+              {directionList}
+            </Select>
+          </FormControl>
         </Box>
       ) : (
         ""
       )}
       {isStopsLoaded ? (
-        <Box sx={{ minWidth: 120 }}>
-          <InputLabel id="stop-label">Select Stop</InputLabel>
-          <Select
-            labelId="stop-select-label"
-            id="stop"
-            name="stop"
-            value={stop}
-            label="stop"
-            onChange={handleStopChange}
-          >
-            {stopList}
-          </Select>
+        <Box sx={{ p: 1, minWidth: 120 }}>
+          <FormControl fullWidth>
+            <InputLabel id="stop-select-label">Select stop</InputLabel>
+            <Select
+              labelId="stop-select-label"
+              id="stop"
+              value={stop}
+              label="stop"
+              onChange={handleStopChange}
+            >
+              {stopList}
+            </Select>
+          </FormControl>
         </Box>
       ) : (
         ""
       )}
-      {stop != "" ? (
+      {stop !== "" ? (
         <DepartureTable
           route_id={route.route_id}
           direction_id={direction.Value}

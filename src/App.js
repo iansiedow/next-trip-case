@@ -5,10 +5,12 @@ import Header from "./Header";
 
 function App() {
   return (
-    <Container maxWidth="sm">
+    <>
       <Header />
-      <RouteSelect />
-    </Container>
+      <Container maxWidth="md">
+        <RouteSelect />
+      </Container>
+    </>
   );
 }
 
