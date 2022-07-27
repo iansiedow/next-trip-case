@@ -2,14 +2,16 @@
 This application uses MetroTransits NexTrip API to display departure information based on a selected Route, Destination, and Stop. 
 
 It is modeled after the [NexTrip](https://www.metrotransit.org/nextrip) web app in both style and functionality
+
 [NexTrip API Documentation](https://svc.metrotransit.org/nextrip)
+
 [NexTrip Swagger Endpoints](https://svc.metrotransit.org/swagger/index.html)
 
 The app is as single page application (SPA). It uses React functional componenets and hooks with axios used for api calls. The Dropdown, heading, and table components come from Material UI. 
 
-I initially used the `fetch` API for REST calls but switched to `axios` for cleaner and more concise code. Most of my CSS experience is with internal design systems. I went with Material UI over alternatives like Chakra UI, Bootstrap, or Tailwind for ease of use and simple Google/Android styles. Addings custom CSS to the prebuilt components was more challenging and verbose than I had anticipated. If I were to rewrite this project I'd likely skip a design system all together and just use CSS Modules or Sass for greater customization and developer experience. 
+I initially used the `fetch` API for REST calls but switched to `axios` for cleaner and more concise code. Most of my CSS experience is with internal design systems. I went with Material UI over alternatives like Chakra UI, Bootstrap, or Tailwind for ease of use and simple Google/Android styles. Adding custom CSS to the prebuilt components was more challenging and verbose than I had anticipated. If I were to rewrite this project I'd likely skip a design system all together and just use CSS Modules or Sass for greater customization and developer experience. 
 
-If I had time to get the app production ready I would probably split out the BusLinesForm.js into reusable dropdown and table components. To manage state across components I'd use Redux. I would also consider migrating the app to use TypeScript over JavaScript to catch type errors and improve developer experience.
+If I had time to get the app production ready I would probably split out the BusLinesForm.js into reusable dropdown and table components. To manage state across components I'd use Redux. I would also consider migrating the app to use TypeScript over JavaScript to catch type errors and improve developer experience. Finally I would probably need to eject Create-React-App and customzie the build process for production deployments.
 
 # Getting Started with Create React App
 
